@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHADOW TERMINAL</title>
+<style>
+:root{--green:#00ff83;--green2:#00b85f;--bg:#020604;--panel:#030b07;--line:#008d4b;--text:#c7ffe2;--muted:#69c99a}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body.alt-theme{--green:#54d8ff;--green2:#168db7;--line:#126b8b;--text:#d8f7ff;--muted:#8ed8ee}
+body.alt-theme .hero h2{color:#54d8ff;text-shadow:0 0 12px #54d8ff55}
+body.alt-theme .panel-title,body.alt-theme .tools-title,body.alt-theme .tool-card h3{color:#54d8ff}
+body{margin:0;background:radial-gradient(ellipse at 50% 0%,#062313 0,#020604 45%,#010302 100%);color:var(--text);font-family:Consolas,"Courier New",monospace;min-height:100vh}
+button,input{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.topbar{display:flex;align-items:center;gap:18px;padding:14px 22px;border-bottom:1px solid var(--green2);background:#020604ed;position:sticky;top:0;z-index:5}
+.logo-icon{font-size:32px;color:var(--green);text-shadow:0 0 14px #00ff83}
+.brand{min-width:250px}.brand h1{margin:0;color:var(--green);font:700 24px Arial,sans-serif;letter-spacing:1px}.brand small{color:var(--green);letter-spacing:2px}
+nav{display:flex;gap:22px;margin:auto}nav a{font-size:13px;color:#a7f9d1;padding:8px 3px}nav a:hover,nav a.active{color:var(--green);border-bottom:2px solid var(--green)}
+.online{font-size:12px;color:var(--green);white-space:nowrap}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);margin-right:8px}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr) 270px;gap:16px;padding:18px}
+.panel{border:1px solid var(--line);border-radius:9px;background:linear-gradient(145deg,#031109eF,#010403f5);box-shadow:0 0 14px #00ff8309;overflow:hidden}
+.panel-title{padding:12px 14px;color:var(--green);font-weight:bold;border-bottom:1px solid #07552f;font-size:14px}
+.side-link{display:block;padding:12px 14px;color:#00e979;border-radius:4px;margin:3px 6px}.side-link:hover,.side-link.selected{background:#004b28;color:white}
+.side-link span{display:inline-block;width:25px}
+.stats{padding:12px 14px}.stat{display:flex;justify-content:space-between;gap:10px;padding:8px 0;font-size:12px}.quote{padding:20px;color:var(--green);line-height:1.7;font-size:13px}
+.hero{min-height:205px;position:relative;display:flex;align-items:center;padding:28px;overflow:hidden;margin-bottom:16px;background:linear-gradient(90deg,#020905 5%,#03190b 50%,#010503 100%)}
+#heroRain{position:absolute;inset:0;width:100%;height:100%;opacity:.35}
+.hero-copy{position:relative;z-index:1;max-width:75%}.eyebrow{color:var(--green);font-weight:bold}.hero h2{font-size:clamp(24px,3vw,38px);margin:8px 0;color:var(--green);text-shadow:0 0 12px #00ff8355;letter-spacing:2px}.hero p{margin:8px 0;color:#d7ffe9}.hero-tag{position:absolute;right:18px;bottom:28px;border:1px solid var(--green);padding:12px;color:var(--green);font-size:11px;line-height:1.8;background:#010603a8}
+.terminal{margin-bottom:16px}.terminal-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;color:var(--green);border-bottom:1px solid var(--line);font-weight:bold}.window-buttons{display:flex;gap:8px}.tiny{background:transparent;border:1px solid var(--line);color:var(--green);padding:4px 9px;border-radius:5px}.terminal-screen{height:300px;overflow:auto;padding:14px 16px;font-size:13px;line-height:1.5;background:#010302}.output-line{white-space:pre-wrap;overflow-wrap:anywhere}.ok{color:var(--green)}.promptline{display:flex;align-items:center;gap:8px;margin-top:6px}.prompt{color:var(--green);white-space:nowrap}.command-input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#fff;caret-color:var(--green)}
+.tools-title{padding:10px 14px;color:var(--green);font-weight:bold}.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;padding:0 12px 12px}.tool-card{border:1px solid #087541;border-radius:7px;padding:12px;background:#020805}.tool-card .icon{font-size:22px;color:var(--green)}.tool-card h3{font-size:12px;color:var(--green);margin:8px 0}.tool-card p{font-size:11px;line-height:1.5;min-height:48px;margin:0 0 10px}.tool-card button{border:1px solid var(--green);background:#002612;color:var(--green);padding:5px 8px;border-radius:4px;font-size:11px}.tool-card button:hover,.tiny:hover{background:#00532d}
+.bar-wrap{padding:12px 14px}.bar-label{display:flex;justify-content:space-between;font-size:11px;margin:4px 0}.bar{height:10px;border:1px solid #07552f;border-radius:4px;background:#03150b;overflow:hidden;margin-bottom:14px}.bar span{display:block;height:100%;background:linear-gradient(90deg,#00b85f,#00ff83);box-shadow:0 0 10px #00ff83}
+.map-art{height:120px;display:flex;align-items:center;justify-content:center;color:#00c96b;font-size:12px;text-align:center;line-height:1.5;background:radial-gradient(ellipse,#00351b 0%,transparent 70%)}
+.activity{padding:12px 14px;font-size:12px}.activity div{display:flex;justify-content:space-between;padding:5px 0}.safety{display:flex;gap:12px;align-items:center;padding:14px;color:var(--green);font-size:11px;line-height:1.8}.globe{font-size:35px}
+.matrix-box{height:185px;position:relative;background:#010503}.matrix-box canvas{width:100%;height:100%;display:block}.matrix-label{position:absolute;top:10px;left:12px;color:var(--green);font-size:12px;background:#010503aa;padding:4px}
+footer{border-top:1px solid var(--line);padding:16px 22px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#80d9b0;font-size:11px}
+.modal{display:none;position:fixed;inset:0;background:#000b;z-index:20;align-items:center;justify-content:center;padding:18px}.modal.open{display:flex}.modal-box{width:min(520px,100%);background:#020805;border:1px solid var(--green);border-radius:9px;box-shadow:0 0 25px #00ff8333;padding:18px}.modal-box h2{color:var(--green);margin-top:0}.modal-box p{line-height:1.6}.modal-box input{width:100%;background:#010302;border:1px solid var(--line);padding:10px;color:white;margin:8px 0}.modal-actions{display:flex;gap:8px;flex-wrap:wrap}.modal-actions button{background:#002612;color:var(--green);border:1px solid var(--green);padding:8px 12px;border-radius:5px}
+@media(max-width:1050px){.layout{grid-template-columns:190px minmax(0,1fr)}.right-col{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.right-col .panel{margin:0}.tools-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.brand{min-width:190px}nav{gap:10px}}
+@media(max-width:700px){.topbar{flex-wrap:wrap;padding:12px}.brand{min-width:0;flex:1}.brand h1{font-size:19px}.online{font-size:10px}nav{order:3;width:100%;overflow:auto;justify-content:flex-start;margin:0;gap:18px}.layout{display:flex;flex-direction:column;padding:10px}.left-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}.left-col .panel{margin:0}.hero{min-height:220px;padding:18px}.hero-copy{max-width:100%}.hero-tag{display:none}.terminal-screen{height:280px;font-size:12px}.tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.right-col{display:flex;flex-direction:column}.stat{font-size:11px}.quote{padding:12px}footer{padding:14px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo-icon">◈</div>
+  <div class="brand"><h1>SHADOW TERMINAL</h1><small>EXPLORE&nbsp; // &nbsp;LEARN&nbsp; // &nbsp;GROW</small></div>
+  <nav><a class="active" href="#home">⌂ HOME</a><a href="#terminal">TERMINAL</a><a href="#tools">TOOLS</a><a href="#learn">LEARN</a><a href="#about">ABOUT</a><a href="#contact">CONTACT</a></nav>
+  <div class="online"><span class="dot"></span>TERMINAL: ONLINE</div>
+</header>
+<div class="layout" id="home">
+<aside class="left-col">
+  <section class="panel">
+    <div class="panel-title">♙ SYSTEM MENU</div>
+    <a class="side-link selected" href="#home"><span>⌂</span> Home</a>
+    <a class="side-link" href="#terminal"><span>▣</span> Terminal</a>
+    <a class="side-link" href="#tools"><span>⚒</span> Tools</a>
+    <a class="side-link" href="#learn"><span>▤</span> Learning</a>
+    <a class="side-link" href="#about"><span>ⓘ</span> About</a>
+    <a class="side-link" href="#contact"><span>✉</span> Contact</a>
+    <div class="panel-title" style="margin-top:12px">QUICK STATS</div>
+    <div class="stats"><div class="stat"><span>Uptime</span><span id="uptime">00:00:00</span></div><div class="stat"><span>Visitors</span><span>1,337</span></div><div class="stat"><span>Status</span><span><span class="dot"></span>Online</span></div><div class="stat"><span>Server</span><span>Local (Browser)</span></div></div>
+  </section>
+  <section class="panel quote">“The best hackers<br>aren’t born...<br>they’re built.”<div style="text-align:right;margin-top:12px">— Shadow Terminal</div></section>
+</aside>
+<main>
+  <section class="panel hero">
+    <canvas id="heroRain"></canvas>
+    <div class="hero-copy"><div class="eyebrow">WELCOME TO</div><h2>SHADOW TERMINAL</h2><div class="eyebrow">A PLACE FOR CURIOUS MINDS</div><p>› &nbsp;Explore. Learn. Build a safer digital world.</p></div>
+    <div class="hero-tag">// HACKING<br>// CYBERSECURITY<br>// ETHICAL HACKING<br>// PROGRAMMING<br>// A BETTER TOMORROW</div>
+  </section>
+  <section class="panel terminal" id="terminal">
+    <div class="terminal-head"><span>♙ SHADOW TERMINAL v1.0</span><div class="window-buttons"><button class="tiny" id="minimize" aria-label="Minimize terminal">−</button><button class="tiny" id="clearBtn" title="Clear terminal">⌫ Clear</button><button class="tiny" id="matrixBtn">✣ Matrix</button></div></div>
+    <div class="terminal-screen" id="terminalScreen" role="log" aria-live="polite">
+      <div class="output-line ok">[ OK ] Initializing terminal...</div><div class="output-line ok">[ OK ] Loading interface...</div><div class="output-line ok">[ OK ] Secure session ready.</div><br>
+      <div class="output-line">Type <span class="ok">help</span> and press Enter to see available commands.</div>
+      <div class="promptline"><span class="prompt">visitor@shadow:~$</span><input class="command-input" id="commandInput" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal command input"></div>
+    </div>
+  </section>
+  <section class="panel" id="tools">
+    <div class="tools-title">FEATURED TOOLS</div>
+    <div class="tools-grid">
+      <article class="tool-card"><div class="icon">♙</div><h3>Password Generator</h3><p>Generate a strong random password locally in your browser.</p><button data-tool="password">Launch →</button></article>
+      <article class="tool-card"><div class="icon">#</div><h3>SHA-256 Hash</h3><p>Create a SHA-256 hash from text using your browser.</p><button data-tool="hash">Launch →</button></article>
+      <article class="tool-card"><div class="icon">⌖</div><h3>IP Lookup</h3><p>Learn what an IP address is. No external lookup is performed.</p><button data-tool="ip">Launch →</button></article>
+      <article class="tool-card"><div class="icon">⌘</div><h3>Port Scanner</h3><p>Explore common network ports with a safe learning guide.</p><button data-tool="ports">Launch →</button></article>
+      <article class="tool-card" id="learn"><div class="icon">▤</div><h3>Cyber Guide</h3><p>Learn cybersecurity basics and ethical practice.</p><button data-tool="guide">Launch →</button></article>
+      <article class="tool-card"><div class="icon">✓</div><h3>Password Strength</h3><p>Check password strength locally in your browser.</p><button data-tool="strength">Launch →</button></article>
+      <article class="tool-card"><div class="icon">⇄</div><h3>Text Encoder</h3><p>Encode or decode text using Base64 for learning.</p><button data-tool="encoder">Launch →</button></article>
+      <article class="tool-card"><div class="icon">✦</div><h3>Secret Mode</h3><p>Discover a hidden terminal message.</p><button data-tool="secret">Launch →</button></article>
+    </div>
+  </section>
+</main>
+<aside class="right-col">
+  <section class="panel">
+    <div class="panel-title">SYSTEM STATUS <span style="float:right;font-size:10px">SIMULATED</span></div>
+    <div class="bar-wrap">
+      <div class="bar-label"><span>CPU Usage</span><span id="cpuVal">12%</span></div><div class="bar"><span id="cpuBar" style="width:12%"></span></div>
+      <div class="bar-label"><span>Memory Usage</span><span id="memVal">28%</span></div><div class="bar"><span id="memBar" style="width:28%"></span></div>
+      <div class="bar-label"><span>Disk Usage</span><span id="diskVal">17%</span></div><div class="bar"><span id="diskBar" style="width:17%"></span></div>
+      <div class="bar-label"><span>Network</span><span id="netVal">5%</span></div><div class="bar"><span id="netBar" style="width:5%"></span></div>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="panel-title">GLOBAL ACTIVITY</div><div class="map-art">╱╲  ░▒▓ DIGITAL WORLD ▓▒░  ╱╲<br>SECURE • LEARN • PROTECT</div>
+    <div class="activity"><div><span>Demo Connections</span><span>1,337</span></div><div><span>Threats Blocked</span><span>42</span></div><div><span>System Load</span><span style="color:var(--green)">● Low</span></div></div>
+  </section>
+  <section class="panel safety" id="about"><div class="globe">◎</div><div>STAY SAFE<br>STAY INFORMED<br>STAY HACKING (ETHICALLY)</div></section>
+  <section class="panel"><div class="panel-title">LIVE MATRIX <button class="tiny" id="matrixToggle" style="float:right;padding:2px 7px">● ON</button></div><div class="matrix-box"><canvas id="sideRain"></canvas><div class="matrix-label">SIMULATION ONLY</div></div></section>
+</aside>
+</div>
+<footer id="contact"><span>SHADOW TERMINAL v1.0 &nbsp; | &nbsp; Educational Platform &nbsp; | &nbsp; Not a real hacking tool</span><span>Built for a safer digital world &lt;3 &nbsp; · &nbsp; <a href="#home">Back to top ↑</a></span></footer>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-box"><h2 id="modalTitle">Tool</h2><div id="modalBody"></div><div class="modal-actions" id="modalActions"></div></div></div>
+<script>
+const screen=document.getElementById('terminalScreen'), input=document.getElementById('commandInput');
+let history=[],historyIndex=0,start=Date.now(),minimized=false;
+function line(text,cls=''){const d=document.createElement('div');d.className='output-line '+cls;d.textContent=text;screen.insertBefore(d,screen.querySelector('.promptline'));return d}
+function htmlLine(html){const d=document.createElement('div');d.className='output-line';d.innerHTML=html;screen.insertBefore(d,screen.querySelector('.promptline'))}
+function keepPrompt(){screen.querySelector('.promptline')?.remove();const p=document.createElement('div');p.className='promptline';p.innerHTML='<span class="prompt">visitor@shadow:~$</span><input class="command-input" id="commandInput" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal command input">';screen.appendChild(p);const next=p.querySelector('input');next.addEventListener('keydown',handleKey);next.focus();screen.scrollTop=screen.scrollHeight}
+function handleKey(e){if(e.key==='Enter'){const value=e.target.value.trim();line('visitor@shadow:~$ '+value);if(value){history.push(value);historyIndex=history.length;runCommand(value)}e.target.value='';screen.scrollTop=screen.scrollHeight}else if(e.key==='ArrowUp'){e.preventDefault();if(historyIndex>0){historyIndex--;e.target.value=history[historyIndex]||''}}else if(e.key==='ArrowDown'){e.preventDefault();if(historyIndex<history.length-1){historyIndex++;e.target.value=history[historyIndex]||''}else{historyIndex=history.length;e.target.value=''}}}
+input.addEventListener('keydown',handleKey);
+window.addEventListener('load',()=>{const bootLines=['[ BOOT ] Shadow interface loaded','[ OK ] Browser-safe tools ready','[ INFO ] Type help to explore'];let i=0;const timer=setInterval(()=>{if(i<bootLines.length){line(bootLines[i++], 'ok');screen.scrollTop=screen.scrollHeight}else clearInterval(timer)},420)});
+const helpText=[['help','Show this help message'],['about','Information about this website'],['whoami','Display a fictional user profile'],['date','Show current date and time'],['clear','Clear terminal screen'],['skills','Show cybersecurity learning topics'],['matrix','Toggle Matrix animation'],['diagnose','Run simulated system diagnostics'],['contact','Show contact information'],['banner','Display the welcome banner'],['password','Open password generator'],['strength','Open password strength checker'],['encoder','Open Base64 text encoder'],['secret','Reveal a secret message'],['theme','Toggle terminal theme'],['guide','Show ethical cybersecurity tips']];
+function runCommand(raw){const parts=raw.split(/\s+/),cmd=parts[0].toLowerCase();switch(cmd){
+case 'help':htmlLine('<span class="ok">Available commands:</span>');helpText.forEach(([c,d])=>htmlLine('  <span class="ok">'+c.padEnd(12,' ')+'</span> - '+d));break;
+case 'about':line('SHADOW TERMINAL is a browser-based cyber learning demo. All system readings are simulated.');break;
+case 'whoami':line('visitor — curious learner | permissions: browser-demo | mode: ethical');break;
+case 'date':line(new Date().toString());break;
+case 'clear':screen.querySelectorAll('.output-line').forEach(n=>n.remove());break;
+case 'skills':line('Learning path: networking basics • Linux fundamentals • web security • cryptography • digital safety');break;
+case 'matrix':toggleMatrix();line('Matrix animation toggled. This is a visual effect only.','ok');break;
+case 'diagnose':line('[ OK ] Interface responsive');line('[ OK ] Browser session active');line('[ OK ] Terminal input ready');line('[ INFO ] CPU, memory and network values are simulated.');break;
+case 'contact':line('Contact: add your own contact details in index.html when you are ready.');break;
+case 'banner':line(' ____  _   _ADOW TERMINAL | EXPLORE // LEARN // GROW');break;
+case 'password':openTool('password');break;
+case 'strength':openTool('strength');break;
+case 'encoder':openTool('encoder');break;
+case 'secret':line('✦ SECRET UNLOCKED: Stay curious. Learn responsibly. Help make the internet safer.','ok');break;
+case 'theme':document.body.classList.toggle('alt-theme');line('Theme toggled. Type theme again to switch back.','ok');break;
+case 'guide':openTool('guide');break;
+case 'sudo':line('Nice try 😄 This is a safe browser simulation; administrator commands are disabled.');break;
+case 'ls':line('about.txt   skills.txt   safety.md   welcome.txt');break;
+case 'pwd':line('/home/visitor/shadow-terminal (simulated)');break;
+case 'echo':line(parts.slice(1).join(' '));break;
+default:line("Command not found: "+cmd+". Type 'help' to see available commands.");
+}screen.scrollTop=screen.scrollHeight}
+function clearTerminal(){screen.querySelectorAll('.output-line').forEach(n=>n.remove());}
+document.getElementById('clearBtn').addEventListener('click',()=>{clearTerminal();input?.focus()});
+document.getElementById('minimize').addEventListener('click',()=>{minimized=!minimized;screen.style.display=minimized?'none':'block';document.getElementById('minimize').textContent=minimized?'+':'−'});
+const modal=document.getElementById('modal'),modalTitle=document.getElementById('modalTitle'),modalBody=document.getElementById('modalBody'),modalActions=document.getElementById('modalActions');
+function openTool(name){modal.classList.add('open');modalActions.innerHTML='';modalBody.innerHTML='';
+const addButton=(label,fn)=>{const b=document.createElement('button');b.textContent=label;b.onclick=fn;modalActions.appendChild(b)};
+if(name==='password'){modalTitle.textContent='Password Generator';modalBody.innerHTML='<p>Generate a random password locally. For important accounts, use a trusted password manager.</p><label>Length <input id="pwLength" type="number" min="8" max="64" value="20"></label><input id="pwOut" readonly aria-label="Generated password" placeholder="Your password will appear here">';addButton('Generate',()=>{let n=Math.max(8,Math.min(64,Number(document.getElementById('pwLength').value)||20));const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*()-_=+';let out='';const bytes=new Uint32Array(n);if(crypto?.getRandomValues)crypto.getRandomValues(bytes);else for(let i=0;i<n;i++)bytes[i]=Math.random()*4294967296;for(let x of bytes)out+=chars[x%chars.length];document.getElementById('pwOut').value=out});addButton('Copy',async()=>{const v=document.getElementById('pwOut').value;if(v){try{await navigator.clipboard.writeText(v);line('Generated password copied (if clipboard permission was granted).','ok')}catch{document.getElementById('pwOut').select()}}});
+}else if(name==='hash'){modalTitle.textContent='SHA-256 Hash Generator';modalBody.innerHTML='<p>Text stays in this browser. Empty input is allowed.</p><input id="hashInput" placeholder="Enter text to hash"><input id="hashOut" readonly placeholder="SHA-256 result">';addButton('Generate hash',async()=>{const data=new TextEncoder().encode(document.getElementById('hashInput').value);if(!crypto.subtle){document.getElementById('hashOut').value='Web Crypto unavailable; open via a modern browser.';return}const digest=await crypto.subtle.digest('SHA-256',data);document.getElementById('hashOut').value=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('')});
+}else if(name==='ip'){modalTitle.textContent='IP Lookup — Learning Mode';modalBody.innerHTML='<p>An IP address is a numeric label used to identify a device or network interface. This demo does not contact external services or reveal your IP.</p><p><span class="ok">Private IPv4 examples:</span><br>192.168.1.10 · 10.0.0.5 · 172.16.0.20</p><p>Try learning about DNS, routing, and private vs. public addresses.</p>';
+}else if(name==='ports'){modalTitle.textContent='Port Scanner — Learning Mode';modalBody.innerHTML='<p>This site does not scan any devices. Common TCP ports to learn about:</p><p>22 — SSH<br>53 — DNS<br>80 — HTTP<br>443 — HTTPS<br>3389 — Remote Desktop</p><p class="ok">Only test systems you own or have explicit permission to assess.</p>';
+ }else if(name==='strength'){modalTitle.textContent='Password Strength Checker';modalBody.innerHTML='<p>Checking happens only in this browser. Avoid entering a password you currently use for an important account.</p><input id="strengthInput" type="password" placeholder="Try a sample password"><div id="strengthResult" class="ok">Strength: waiting for input</div>';document.getElementById('strengthInput').addEventListener('input',e=>{const v=e.target.value;let score=0;if(v.length>=12)score++;if(/[a-z]/.test(v)&&/[A-Z]/.test(v))score++;if(/\\d/.test(v))score++;if(/[^A-Za-z0-9]/.test(v))score++;const labels=['Very weak','Weak','Fair','Good','Strong'];document.getElementById('strengthResult').textContent='Strength estimate: '+(v?labels[Math.min(score,4)]:'waiting for input')+' ('+v.length+' characters)';});addButton('Show / hide',()=>{const f=document.getElementById('strengthInput');f.type=f.type==='password'?'text':'password'});
+}else if(name==='encoder'){modalTitle.textContent='Base64 Text Encoder / Decoder';modalBody.innerHTML='<p>Base64 is an encoding format, not encryption. Do not use it to protect secrets.</p><input id="encodeInput" placeholder="Enter text"><input id="encodeOutput" readonly placeholder="Result">';addButton('Encode',()=>{try{document.getElementById('encodeOutput').value=btoa(unescape(encodeURIComponent(document.getElementById('encodeInput').value)))}catch(e){document.getElementById('encodeOutput').value='Could not encode input'}});addButton('Decode',()=>{try{document.getElementById('encodeOutput').value=decodeURIComponent(escape(atob(document.getElementById('encodeInput').value.trim())))}catch(e){document.getElementById('encodeOutput').value='Invalid Base64 input'}});
+}else if(name==='secret'){modalTitle.textContent='Secret Mode';modalBody.innerHTML='<p class="ok">✦ YOU FOUND THE HIDDEN MESSAGE ✦</p><p>Curiosity is powerful. Use your skills to learn, protect, and build—not to harm.</p><p>Hint: type <code>secret</code> in the terminal to reveal this again.</p>';
+}else{modalTitle.textContent='Cyber Guide';modalBody.innerHTML='<p><span class="ok">Start here:</span></p><p>1. Learn networking: IP, DNS, TCP, HTTP/HTTPS.<br>2. Practice Linux commands in a legal sandbox.<br>3. Learn authentication and password safety.<br>4. Study web security and responsible disclosure.<br>5. Get written permission before testing a system.</p>'}
+addButton('Close',()=>modal.classList.remove('open'))}
+document.querySelectorAll('[data-tool]').forEach(b=>b.addEventListener('click',()=>openTool(b.dataset.tool)));
+document.getElementById('matrixBtn').addEventListener('click',toggleMatrix);document.getElementById('matrixToggle').addEventListener('click',toggleMatrix);
+modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.classList.remove('open')});
+function toggleMatrix(){matrixOn=!matrixOn;document.getElementById('matrixToggle').textContent=matrixOn?'● ON':'○ OFF';if(!matrixOn){[heroRain,sideRain].forEach(c=>{const x=c.getContext('2d');x.clearRect(0,0,c.width,c.height)})}}
+let matrixOn=true;const chars='01アイウエオカキクケコサシスセソタチツテト';
+function setupRain(canvasId,small=false){const c=document.getElementById(canvasId),ctx=c.getContext('2d');let drops=[];function resize(){const rect=c.getBoundingClientRect();c.width=Math.max(1,Math.floor(rect.width*(devicePixelRatio||1)));c.height=Math.max(1,Math.floor(rect.height*(devicePixelRatio||1)));ctx.setTransform(devicePixelRatio||1,0,0,devicePixelRatio||1,0,0);const cols=Math.ceil(rect.width/(small?10:14));drops=Array.from({length:cols},()=>Math.random()*-50);};resize();window.addEventListener('resize',resize);function draw(){const rect=c.getBoundingClientRect();if(matrixOn){ctx.fillStyle='rgba(0,3,1,0.12)';ctx.fillRect(0,0,rect.width,rect.height);ctx.fillStyle='#00ff83';ctx.font=(small?'10':'13')+'px monospace';for(let i=0;i<drops.length;i++){const t=chars[Math.floor(Math.random()*chars.length)];ctx.fillText(t,i*(small?10:14),drops[i]*(small?10:14));if(drops[i]*(small?10:14)>rect.height&&Math.random()>.97)drops[i]=0;drops[i]++}}requestAnimationFrame(draw)}draw()}
+setupRain('heroRain');setupRain('sideRain',true);
+setInterval(()=>{let secs=Math.floor((Date.now()-start)/1000);document.getElementById('uptime').textContent=[Math.floor(secs/3600),Math.floor(secs/60)%60,secs%60].map(n=>String(n).padStart(2,'0')).join(':');[['cpu',5,30],['mem',20,45],['disk',12,22],['net',2,18]].forEach(([id,min,max])=>{const v=Math.floor(min+Math.random()*(max-min));document.getElementById(id+'Val').textContent=v+'%';document.getElementById(id+'Bar').style.width=v+'%'})},2500);
+document.querySelectorAll('nav a,.side-link').forEach(a=>a.addEventListener('click',()=>{document.querySelectorAll('nav a').forEach(x=>x.classList.toggle('active',x.getAttribute('href')===a.getAttribute('href')))}));
+</script>
+</body>
+</html>
